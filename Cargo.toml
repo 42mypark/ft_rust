@@ -1,3 +1,3 @@
 [workspace]
 
-members = [ "app","vec"]
+members = ["app", "vec", "option"]
