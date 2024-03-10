@@ -43,7 +43,7 @@ impl<T> Try for RevOpt<T> {
 
 #[cfg(test)]
 mod test {
-	use std::ops::Try;
+	use std::ops::{ControlFlow, Try};
 
 	use crate::RevOpt;
 
@@ -65,8 +65,11 @@ mod test {
 		fn branch() -> RevOpt<usize> {
 			let a = RevOpt::None;
 
-			let b = a?;
-
+			// let b = a?;
+			let b = match a.branch() {
+				ControlFlow::Break(residual) => return residual,
+				ControlFlow::Continue(output) => output,
+			};
 			RevOpt::from_output(b)
 		}
 
@@ -78,7 +81,11 @@ mod test {
 		fn branch() -> RevOpt<usize> {
 			let a = RevOpt::Some(1);
 
-			let _ = a?;
+			// let _ = a?;
+			let _ = match a.branch() {
+				ControlFlow::Break(residual) => return residual,
+				ControlFlow::Continue(output) => output,
+			};
 
 			unreachable!()
 		}
